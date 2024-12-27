@@ -13,14 +13,13 @@ class TestRegisterPage(unittest.TestCase):
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--headless")
         cls.driver = webdriver.Chrome(options=chrome_options)
-        cls.driver.get("http://localhost:3000/register")  
+        cls.driver.get("http://15.207.99.205:3000/register")  
 
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
 
     def test_form_loads_correctly(self):
-        """Verify that the registration form loads with all required fields."""
         try:
             self.assertTrue(self.driver.find_element(By.NAME, "username"))
             self.assertTrue(self.driver.find_element(By.NAME, "email"))
@@ -32,7 +31,6 @@ class TestRegisterPage(unittest.TestCase):
             raise
 
     def test_successful_registration(self):
-        """Test the successful registration flow."""
         try:
             self.driver.find_element(By.NAME, "username").clear()
             self.driver.find_element(By.NAME, "username").send_keys("testuser")
@@ -121,14 +119,13 @@ class TestLoginPage(unittest.TestCase):
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--headless")
         cls.driver = webdriver.Chrome(options=chrome_options)
-        cls.driver.get("http://localhost:3000/login")
+        cls.driver.get("http://15.207.99.205:3000/login")
 
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
 
     def test_form_loads_correctly(self):
-        """Verify that the login form loads with all required fields."""
         try:
             self.assertTrue(self.driver.find_element(By.NAME, "email"))
             self.assertTrue(self.driver.find_element(By.NAME, "password"))
@@ -139,7 +136,6 @@ class TestLoginPage(unittest.TestCase):
             raise
 
     def test_successful_login(self):
-        """Test the successful login flow."""
         try:
             self.driver.find_element(By.NAME, "email").clear()
             self.driver.find_element(By.NAME, "email").send_keys("testuser@example.com")
@@ -147,9 +143,8 @@ class TestLoginPage(unittest.TestCase):
             self.driver.find_element(By.NAME, "password").send_keys("password123")
             self.driver.find_element(By.NAME, "submit").click()
 
-            # Wait for successful login (e.g., redirection to dashboard or account page)
             WebDriverWait(self.driver, 10).until(
-                EC.url_contains("/")  # Adjust this based on your app's URL
+                EC.url_contains("/") 
             )
             self.assertIn("/", self.driver.current_url)
             print("Test Passed: Successful login.")
@@ -166,7 +161,6 @@ class TestLoginPage(unittest.TestCase):
             self.driver.find_element(By.NAME, "password").send_keys("wrongpassword")
             self.driver.find_element(By.NAME, "submit").click()
 
-            # Wait for error message to appear
             invalid_elements = self.driver.find_elements(By.CSS_SELECTOR, "input:invalid")
             for elem in invalid_elements:
                 print(f"Invalid element: {elem.get_attribute('name')}")
@@ -177,13 +171,11 @@ class TestLoginPage(unittest.TestCase):
             raise
 
     def test_empty_fields(self):
-        """Test submitting the login form with empty fields."""
         try:
             self.driver.find_element(By.NAME, "email").clear()
             self.driver.find_element(By.NAME, "password").clear()
             self.driver.find_element(By.NAME, "submit").click()
 
-            # Wait for validation error
             invalid_elements = self.driver.find_elements(By.CSS_SELECTOR, "input:invalid")
             for elem in invalid_elements:
                 print(f"Invalid element: {elem.get_attribute('name')}")
@@ -194,7 +186,6 @@ class TestLoginPage(unittest.TestCase):
             raise
 
     def test_invalid_email(self):
-        """Test submitting the form with an invalid email format."""
         try:
             self.driver.find_element(By.NAME, "email").clear()
             self.driver.find_element(By.NAME, "email").send_keys("invalid-email")
@@ -202,7 +193,6 @@ class TestLoginPage(unittest.TestCase):
             self.driver.find_element(By.NAME, "password").send_keys("password123")
             self.driver.find_element(By.NAME, "submit").click()
 
-            # Wait for validation error
             invalid_elements = self.driver.find_elements(By.CSS_SELECTOR, "input:invalid")
             for elem in invalid_elements:
                 print(f"Invalid element: {elem.get_attribute('name')}")
@@ -212,12 +202,8 @@ class TestLoginPage(unittest.TestCase):
             print(e)
             raise
 
-# Create a combined test suite to run both test classes together
 if __name__ == "__main__":
-    # Load both test classes
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestRegisterPage))
     suite.addTest(unittest.makeSuite(TestLoginPage))
-
-    # Run the suite
     unittest.TextTestRunner().run(suite)
